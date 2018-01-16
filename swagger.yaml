@@ -1,0 +1,1735 @@
+swagger: '2.0'
+info:
+  title: Shifter API
+  description: Shifter API allows you to operate all Shifter resources, which are projects, archives, App, Generator.
+  version: "1.0"
+host: api.getshifter.io
+schemes:
+  - https
+basePath: /v1
+produces:
+  - application/json
+paths:
+  /login:
+    post:
+      description: You can get accesstoken to access shifter resources.
+      tags:
+        - login
+      parameters:
+        - name: request
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/LoginPostRequest'
+      responses:
+        200:
+          description: Login success
+          schema:
+            "$ref": "#/definitions/LoginPostResponse"
+        401:
+          description: Invalid Username or Password
+          schema:
+            "$ref": "#/definitions/LoginErrorResponse"
+          examples:
+            application/json:
+              message: Invalid Username or Password
+  /projects:
+    get:
+      description: You can get the infomation of your projects
+      tags:
+        - projects
+      responses:
+        200:
+          description: Get your projects infomation
+          schema:
+            type: array
+            items:
+              properties:
+                project_id:
+                  type: string
+                site_name:
+                  type: string
+                site_owner:
+                  type: string
+                update_time:
+                  type: string
+                wordpress_site_url:
+                  type: string
+                access_url:
+                  type: string
+                deploy_type:
+                  type: string
+                domain:
+                  type: string
+                create_time:
+                  type: string
+    post:
+      description: Create new project
+      tags:
+        - projects
+      parameters:
+        - name: request
+          in: body
+          required: true
+          schema:
+            properties:
+              project_name:
+                type: string
+              php_version:
+                type: string
+              archive_id:
+                type: string
+      responses:
+        201:
+          description: Create successfully
+          schema:
+            properties:
+              project_id:
+                type: string
+              project_name:
+                type: string
+              shifter_cdn_url:
+                type: string
+              wordpress_site_url:
+                type: string
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /projects/{project_id}:
+    delete:
+      description: Delete your project
+      tags:
+        - projects
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: project ID
+          type: string
+      responses:
+        204:
+          description: Success
+        404:
+          description: can not find your project
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    get:
+      description: Get your project infomation
+      tags:
+        - projects
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: project ID
+          type: string
+      responses:
+        200:
+          description: Project status response
+          schema:
+            properties:
+              project_id:
+                type: string
+              project_name:
+                type: string
+              stock_state:
+                type: string
+              update_time:
+                type: string
+              last_launched:
+                type: string
+              access_url:
+                type: string
+              wordpress_site_url:
+                type: string
+              domain:
+                type: string
+              disk_usage:
+                type: string
+              php_version:
+                type: string
+              deploy_type:
+                type: string
+              create_time:
+                type: string
+        404:
+          description: can not find your project
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /projects/{project_id}/project_name:
+    put:
+      description: Update your project name
+      tags:
+        - projects
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: project ID
+          type: string
+        - name: request
+          in: body
+          required: true
+          schema:
+            properties:
+              project_name:
+                type: string
+                description: project name
+      responses:
+        204:
+          description: Update successfully
+        404:
+          description: can not find your project
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /projects/{project_id}/shifter_cdn_status:
+    get:
+      description: Get Shifter CDN Status
+      tags:
+        - artifacts
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: project ID
+          type: string
+      responses:
+        200:
+          description: Project CloudFront status response
+          schema:
+            properties:
+              status:
+                type: string
+                description: CloudFront Status
+        404:
+          description: can not find your project
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /projects/{project_id}/check_generator_process:
+    get:
+      description: You can get the process of generating
+      tags:
+        - artifacts
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: the process of generating
+          schema:
+            properties:
+              percent:
+                type: integer
+                description: Progress rate of genetating
+              sum_url:
+                type: integer
+                description: The total number of pages to be generated
+              created_url:
+                type: integer
+                description: The number of pages already generated
+              step:
+                type: string
+                description: Progress step  of genetating
+              update_time:
+                type: string
+              owner:
+                type: string
+              message:
+                type: string
+              disk_usage:
+                type: string
+        404:
+          description: can not find your project
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /projects/{project_id}/artifacts:
+    get:
+      description: List generated Artifacts.
+      tags:
+        - artifacts
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: project ID
+          type: string
+      responses:
+        200:
+          description: Get your artifacts info
+          schema:
+            type: array
+            items:
+              properties:
+                artifact_id:
+                  type: string
+                  description: Artifact ID
+                status:
+                  type: string
+                  description: Artifact status
+                artifact_name:
+                  type: string
+                  description: Artifact Name
+                created_at:
+                  type: string
+                  description: created date
+        404:
+          description: can not find your project
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    post:
+      description: generate Artifact.
+      tags:
+        - artifacts
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: project ID
+          type: string
+      responses:
+        201:
+          description: Artifact generate result response
+          schema:
+            properties:
+              project_id:
+                type: string
+                description: Project ID
+              artifact_id:
+                type: string
+                description: Artifact ID
+        404:
+          description: can not find your project
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /projects/{project_id}/artifacts/{artifact_id}:
+    delete:
+      description: Delete Artifacts.
+      tags:
+        - artifacts
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: project ID
+          type: string
+        - name: artifact_id
+          in: path
+          required: true
+          description: Artifact ID
+          type: string
+      responses:
+        204:
+          description: Artifact delete result response
+        404:
+          description: can not find your project
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /projects/{project_id}/artifacts/{artifact_id}/deploy/{deploy_type}:
+    post:
+      description: Deploy generated Artifacts.
+      tags:
+        - artifacts
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: project ID
+          type: string
+        - name: artifact_id
+          in: path
+          required: true
+          description: Artifact ID
+          type: string
+        - name: deploy_type
+          in: path
+          required: true
+          description: Deployment Type (netlify or shifter_cdn)
+          type: string
+      responses:
+        201:
+          description: Artifact deploy successfully
+        404:
+          description: can not find your project or artifact
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /projects/{project_id}/artifacts/{artifact_id}/deploy/netlify/deploy_status/{deploy_status}:
+    post:
+      description: Deploy generated artifacts with status of either draft or publish.
+      tags:
+        - artifacts
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: project ID
+          type: string
+        - name: artifact_id
+          in: path
+          required: true
+          description: Artifact ID
+          type: string
+        - name: deploy_status
+          in: path
+          required: true
+          description: Status with deploying to Netlify (draft or publish)
+          type: string
+      responses:
+        201:
+          description: Artifact deploy successfully
+        400:
+          description: Invalid parametors
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: You can not find your project or artifact
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /projects/{project_id}/artifacts/{artifact_id}/artifact_name:
+    put:
+      description: update your artifact name.
+      tags:
+        - artifacts
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: project ID
+          type: string
+        - name: artifact_id
+          in: path
+          required: true
+          description: artifact ID
+          type: string
+        - name: request
+          in: body
+          required: true
+          schema:
+            properties:
+              artifact_name:
+                type: string
+                description: artifact name
+      responses:
+        204:
+          description: update successfully
+        404:
+          description: can not find your project or artifact
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /projects/{project_id}/artifacts/{artifact_id}/download_url:
+    get:
+      description: download artifact as archive.
+      tags:
+        - artifacts
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: project ID
+          type: string
+        - name: artifact_id
+          in: path
+          required: true
+          description: artifact ID
+          type: string
+      responses:
+        200:
+          description: archive has found.
+        404:
+          description: archive has not found.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /projects/{project_id}/wordpress_site:
+    post:
+      description: Create WordPress Site and import archive to this
+      tags:
+        - wordpressSite
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          type: string
+        - name: request
+          in: body
+          required: true
+          schema:
+            properties:
+              archive_id:
+                type: string
+      responses:
+        201:
+          description: Get the token used for check_wp_setup
+          schema:
+            properties:
+              notification_id:
+                type: string
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: can not find your project
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    put:
+      description: Start WordPress Site
+      tags:
+        - wordpressSite
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          type: string
+        - name: request
+          in: body
+          required: true
+          schema:
+            properties:
+              php_version:
+                type: string
+      responses:
+        201:
+          description: Get the token used for check_wp_setup
+          schema:
+            properties:
+              notification_id:
+                type: string
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: can not find your project
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        409:
+          description: WordPress Site already running
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    delete:
+      description: Stop WordPress Site
+      tags:
+        - wordpressSite
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
+          description: Success
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: can not find your project
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        409:
+          description: WordPress Site already stopping
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /projects/{project_id}/wordpress_site/check_wp_setup/{nortifiction_id}:
+    get:
+      description: Get status of importing process
+      tags:
+        - wordpressSite
+      parameters:
+        - name: nortifiction_id
+          in: path
+          required: true
+          type: string
+        - name: project_id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: WordPress Site importing status
+          schema:
+            type: string
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: missing your project(errorCode:missing_project) or notificationId(errorCode:missing_notification_id)
+          schema:
+            properties:
+              message:
+                type: string
+              errorCode:
+                type: string
+  /status:
+    get:
+      description: You can get the status of your account and shifter
+      tags:
+        - status
+      responses:
+        200:
+          description: the process of generating
+          schema:
+            properties:
+              maintenance:
+                properties:
+                  message:
+                    type: string
+                  target:
+                    type: array
+                    items:
+                      type: string
+                  status:
+                    type: string
+              user:
+                properties:
+                  credit_card_status:
+                    type: string
+                  upper_limit_projects:
+                    type: integer
+                  max_transfer_gb:
+                    type: integer
+                  max_disk_gb:
+                    type: integer
+                  domain_setting:
+                    type: string
+                  netlify_deploy:
+                    type: string
+                  import_archives:
+                    type: string
+                  export_archives:
+                    type: string
+                  backup:
+                    type: integer
+                  enable_subuser:
+                    type: string
+                  notification:
+                    properties:
+                      email:
+                        properties:
+                          destination:
+                            type: string
+                  group:
+                    properties:
+                      name:
+                        type: string
+  /projects/{project_id}/generate_history:
+    get:
+      description: You can get the history of generating in the project
+      tags:
+        - projects
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: the history of generating
+          schema:
+            type: array
+            items:
+              properties:
+                create_time:
+                  type: string
+                update_time:
+                  type: string
+                progress:
+                  type: string
+                message:
+                  type: string
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: can not find your project
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /projects/{project_id}/shifter_cdn_transfer_amount:
+    get:
+      description: You can get the transfer amount for Shifter CDN
+      tags:
+        - projects
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          type: string
+        - name: start_month
+          in: query
+          type: integer
+          description: 'Start month of the period you want to acquire the transfer amount ex: 201605'
+        - name: range
+          in: query
+          type: integer
+          description: 'Period for acquiring it (the month) ex: 12'
+      responses:
+        200:
+          description: Get the transfer data
+          schema:
+            type: array
+            items:
+              properties:
+                transfer_gb:
+                  type: integer
+                track_month:
+                  type: integer
+
+  /account:
+    delete:
+      description: You can delete your account. An invited user cannot be accessed this API.
+      tags:
+        - account
+      responses:
+        204:
+          description: delete successfully
+  /account/notification/email:
+    post:
+      description: Adding your email destination when sending some notifications
+      tags:
+        - account
+      parameters:
+        - name: request
+          in: body
+          schema:
+            properties:
+              email:
+                type: string
+      responses:
+        201:
+          description: Adding successfully
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /archives:
+    get:
+      description: Get the infomation of your archive
+      tags:
+        - archives
+      parameters:
+        - name: project_id
+          in: query
+          description: filter by using project ID
+          type: string
+      responses:
+        200:
+          description: Get Archives info
+          schema:
+            type: array
+            items:
+              properties:
+                archive_id:
+                  type: string
+                archive_alias:
+                  type: string
+                project_id:
+                  type: string
+                archive_owner:
+                  type: string
+                archive_create_date:
+                  type: string
+    post:
+      description: Create new archive record and give you the url for uploading your archive
+      tags:
+        - archives
+      parameters:
+        - name: request
+          in: body
+          schema:
+            properties:
+              project_id:
+                type: string
+                description: project ID
+      responses:
+        201:
+          description: Get the uploading url
+          schema:
+            properties:
+              archive_id:
+                type: string
+              url:
+                type: string
+                description: the url for uploading your archive
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: can not find your project
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /arvhices/public_archive:
+    get:
+      description: Get the infomation of the public archive
+      tags:
+        - archives
+      responses:
+        200:
+          description: Get the archive info
+          schema:
+            properties:
+              archive_id:
+                type: string
+              archive_alias:
+                type: string
+              archive_owner:
+                type: string
+              archive_create_date:
+                type: string
+  /arvhices/download_urls:
+    get:
+      description: Get the download urls of your archives
+      tags:
+        - archives
+      responses:
+        200:
+          description: Get the download urls
+          schema:
+            type: array
+            items:
+              properties:
+                archive_id:
+                  type: string
+                url:
+                  type: string
+  /archives/{archive_id}:
+    post:
+      description: Create new archive record and give you the url for uploading your archive
+      tags:
+        - archives
+      parameters:
+        - name: archive_id
+          in: path
+          required: true
+          type: string
+        - name: request
+          in: body
+          schema:
+            properties:
+              project_id:
+                type: string
+                description: project ID
+      responses:
+        201:
+          description: Get the uploading url
+          schema:
+            properties:
+              archive_id:
+                type: string
+              url:
+                type: string
+                description: the url for uploading your archive
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: can not find your project
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    get:
+      description: Get your archive info
+      tags:
+        - archives
+      parameters:
+        - name: archive_id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Get your archive info
+          schema:
+            properties:
+              archive_id:
+                type: string
+              archive_alias:
+                type: string
+              project_id:
+                type: string
+              archive_owner:
+                type: string
+              archive_create_date:
+                type: string
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: can not find your archive
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    delete:
+      description: Delete your archive
+      tags:
+        - archives
+      parameters:
+        - name: archive_id
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
+          description: Success
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: can not find your archive
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /archives/{archive_id}/project_id:
+    put:
+      description: Update your project_id on archive
+      tags:
+        - archives
+      parameters:
+        - name: archive_id
+          in: path
+          required: true
+          type: string
+        - name: request
+          in: body
+          required: true
+          schema:
+            properties:
+              project_id:
+                type: string
+      responses:
+        204:
+          description: Success
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: can not find your archive or project
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /archives/{archive_id}/archive_name:
+    put:
+      description: Update your archive_name on archive
+      tags:
+        - archives
+      parameters:
+        - name: archive_id
+          in: path
+          required: true
+          type: string
+        - name: request
+          in: body
+          required: true
+          schema:
+            properties:
+              archive_name:
+                type: string
+      responses:
+        204:
+          description: Success
+
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: can not find your archive
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /arvhices/{archive_id}/upload_url:
+    get:
+      description: Get the url for uploading your archive
+      tags:
+        - archives
+      parameters:
+        - name: archive_id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            properties:
+              url:
+                type: string
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: can not find your archive
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /projects/{project_id}/archive:
+    post:
+      description: Create archive from your project
+      tags:
+        - archives
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          type: string
+      responses:
+        201:
+          description: Success
+          schema:
+            properties:
+              stock_state:
+                type: string
+              notification_id:
+                type: string
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: can not find your project
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /domains:
+    get:
+      description: You can get information of your domains registered in shifter
+      tags:
+        - domains
+      parameters:
+        - name: filter
+          in: query
+          description: If it is `sslValid`, you can only get certified domains
+          type: string
+      responses:
+        200:
+          description: information of your domains
+          schema:
+            type: array
+            items:
+              properties:
+                domain:
+                  type: string
+                subject_alternative_names:
+                  type: array
+                  items:
+                    type: string
+                status:
+                  type: string
+                create_time:
+                  type: string
+                validation_emails:
+                  type: array
+                  items:
+                    type: string
+                is_shifter_cdn:
+                  type: boolean
+        400:
+          description: invalid filter name
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /domains/{domain}:
+    get:
+      description: You can get the authentication information of the domain registered by the user
+      tags:
+        - domains
+      parameters:
+        - name: domain
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: information of your domain
+          schema:
+            properties:
+              domain:
+                type: string
+              subject_alternative_names:
+                type: array
+                items:
+                  type: string
+              status:
+                type: string
+              create_time:
+                type: string
+              validation_emails:
+                type: array
+                items:
+                  type: string
+              is_shifter_cdn:
+                type: boolean
+        404:
+          description: can not find your domain
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    post:
+      description: Add your domain
+      tags:
+        - domains
+      parameters:
+        - name: domain
+          in: path
+          required: true
+          type: string
+        - name: request
+          in: body
+          required: false
+          schema:
+            properties:
+              subject_alternative_name:
+                type: string
+      responses:
+        201:
+          description: Success
+    delete:
+      description: Delete the added domain
+      tags:
+        - domains
+      parameters:
+        - name: domain
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
+          description: Success
+        404:
+          description: can not find your domain
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        420:
+          description: domain has been attached to project
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /domains/{domain}/resend_validation_email:
+    post:
+      description: Resend the approval mail of the SSL certificate
+      tags:
+        - domains
+      parameters:
+        - name: domain
+          in: path
+          required: true
+          type: string
+      responses:
+        201:
+          description: Success
+        404:
+          description: can not find your domain
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /domains/{domain}/attach_domain_to_shifter_cdn:
+    post:
+      description: Attache your domain to Shifter CDN
+      tags:
+        - domains
+      parameters:
+        - name: domain
+          in: path
+          required: true
+          type: string
+        - name: request
+          in: body
+          required: true
+          schema:
+            properties:
+              project_id:
+                type: string
+      responses:
+        201:
+          description: Success
+        400:
+          description: invalid parameter
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: can not find the project
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        409:
+          description: CNAME is used by other CDN.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /domains/{domain}/detach_domain_from_shifter_cdn:
+    post:
+      description: Detach your domain from Shifter CDN
+      tags:
+        - domains
+      parameters:
+        - name: domain
+          in: path
+          required: true
+          type: string
+      responses:
+        201:
+          description: Success
+        404:
+          description: can not find your domain
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /domains/{domain}/validate_operation/dns:
+    post:
+      description: validating domain by CNAME
+      tags:
+        - domains
+      parameters:
+        - name: domain
+          in: path
+          required: true
+          type: string
+        - name: request
+          in: body
+          required: false
+          schema:
+            properties:
+              subject_alternative_name:
+                type: string
+      responses:
+        201:
+          description: Success
+  /domains/{domain}/validate_operation/email:
+    post:
+      description: validating domain by email
+      tags:
+        - domains
+      parameters:
+        - name: domain
+          in: path
+          required: true
+          type: string
+        - name: request
+          in: body
+          required: false
+          schema:
+            properties:
+              subject_alternative_name:
+                type: string
+      responses:
+        201:
+          description: Success
+  /domains/{domain}/validate_operation/dns/validation:
+    get:
+      description: get validation status of specfied domain
+      tags:
+        - domains
+      parameters:
+        - name: domain
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            properties:
+              domain:
+                type: string
+              subject_alternative_names:
+                type: array
+                items:
+                  type: string
+              status:
+                type: string
+              create_time:
+                type: string
+              cname:
+                type: object
+                properties:
+                  Name:
+                    type: string
+                  Value:
+                    type: string
+        404:
+          description: can not find your domain
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    post:
+      description: re validating domain by dns
+      tags:
+        - domains
+      parameters:
+        - name: domain
+          in: path
+          required: true
+          type: string
+      responses:
+        201:
+          description: Success
+
+  /coupons/{code}:
+    post:
+      description: Register your coupon code. An invited user cannot be accessed this API.
+      tags:
+        - coupon
+      parameters:
+        - name: code
+          in: path
+          required: true
+          type: string
+      responses:
+        201:
+          description: Success
+        400:
+          description: Invaild coupon code
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /billing:
+    get:
+      description: You can get your billing infomation. An invited user cannot be accessed this API.
+      tags:
+        - billing
+      responses:
+        200:
+          description: Success
+          schema:
+            properties:
+              card:
+                type: object
+                properties:
+                  exp:
+                    type: string
+                  brand:
+                    type: string
+              invoice:
+                type: object
+                properties:
+                  date:
+                    type: string
+                  subtotal:
+                    type: string
+                  total:
+                    type: string
+                  amount_due:
+                    type: string
+                  lines:
+                    type: array
+                    items:
+                      type: string
+              subscription:
+                type: object
+                properties:
+                  current_period_end:
+                    type: string
+                  plan:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      interval:
+                        type: string
+                      metadata:
+                        type: object
+              coupon:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  amount_off:
+                    type: string
+    post:
+      description: Add your billing infomation. An invited user cannot be accessed this API.
+      tags:
+        - billing
+      parameters:
+        - name: request
+          in: body
+          required: true
+          schema:
+            properties:
+              card_number:
+                type: string
+              card_cvv:
+                type: string
+              card_exp_month:
+                type: string
+              card_exp_year:
+                type: string
+              card_owner:
+                type: string
+      responses:
+        201:
+          description: Success
+        400:
+          description: Invalid parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /plans:
+    get:
+      description: You can get all plans. An invited user cannot be accessed this API.
+      tags:
+        - plans
+      responses:
+        200:
+          description: Success
+          schema:
+            properties:
+              free:
+                type: object
+                properties:
+                  monthly:
+                    "$ref": "#/definitions/PlanResponse"
+                  annual:
+                    "$ref": "#/definitions/PlanResponse"
+              personal:
+                properties:
+                  monthly:
+                    "$ref": "#/definitions/PlanResponse"
+                  annual:
+                    "$ref": "#/definitions/PlanWithAnResponse"
+              business:
+                properties:
+                  monthly:
+                    "$ref": "#/definitions/PlanResponse"
+                  annual:
+                    "$ref": "#/definitions/PlanWithAnResponse"
+              agency:
+                properties:
+                  monthly:
+                    "$ref": "#/definitions/PlanResponse"
+                  annual:
+                    "$ref": "#/definitions/PlanWithAnResponse"
+              agencyplus:
+                properties:
+                  monthly:
+                    "$ref": "#/definitions/PlanResponse"
+                  annual:
+                    "$ref": "#/definitions/PlanWithAnResponse"
+  /plans/{plan_name}/{plan_type}:
+    get:
+      description: You can get detail of provided plan. An invited user cannot be accessed this API.
+      tags:
+        - plans
+      parameters:
+        - name: plan_name
+          in: path
+          required: true
+          description: you can specify free or personal or business or agency or agencyplus
+          type: string
+        - name: plan_type
+          in: path
+          required: true
+          description: you can specify annual or monthly
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            "$ref": "#/definitions/PlanWithAnResponse"
+        400:
+          description: Invalid params
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    post:
+      description: You can add or update your plan. An invited user cannot be accessed this API.
+      tags:
+        - plans
+      parameters:
+        - name: plan_name
+          in: path
+          required: true
+          description: you can specify free or personal or business or agency or agencyplus
+          type: string
+        - name: plan_type
+          in: path
+          required: true
+          description: you can specify annual or monthly
+          type: string
+      responses:
+        201:
+          description: Success
+          schema:
+            "$ref": "#/definitions/PlanWithAnResponse"
+        400:
+          description: Invalid params
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /projects/{project_id}/netlify/auth:
+    post:
+      description: "add Netlify&apos;accesstoken to the project"
+      tags:
+        - netlifyAuth
+      parameters:
+        - name: project_id
+          in: path
+          description: your project_id
+          required: true
+          type: string
+        - name: request
+          in: body
+          required: true
+          description: "Netlify&apos;s accessToken"
+          schema:
+            properties:
+              netlify_access_token:
+                type: string
+      responses:
+        201:
+          description: Success
+        400:
+          description: invalid netlify_access_token parameter
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: can not find the project
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    get:
+      description: "get your Netlify&apos;accesstoken in the project"
+      tags:
+        - netlifyAuth
+      parameters:
+        - name: project_id
+          in: path
+          description: your project_id
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            properties:
+              netlify_access_token:
+                type: string
+        404:
+          description: can not find the project
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    delete:
+      description: "remove Netlify&apos;Netlify from the project"
+      tags:
+        - netlifyAuth
+      parameters:
+        - name: project_id
+          in: path
+          description: your project_id
+          required: true
+          type: string
+      responses:
+        204:
+          description: Success
+        404:
+          description: can not find the project
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /sub_users/{username}:
+    post:
+      description: You can invite new users for your projects. An invited user cannot be accessed this API.
+      tags:
+        - subusers
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: You can specify a username which you want to invite
+          type: string
+        - name: request
+          in: body
+          required: true
+          description: A user email which you want to invite
+          schema:
+            properties:
+              email:
+                type: string
+      responses:
+        201:
+          description: Success
+        400:
+          description: Invalid params
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    delete:
+      description: You can delete your invited user. An invited user cannot be accessed this API.
+      tags:
+        - subusers
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: You can specify a username which you want to delete
+          type: string
+      responses:
+        204:
+          description: Success
+        400:
+          description: Invalid params
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: A requested user cannot be found.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /sub_users:
+    get:
+      description: You can get your invited users list. An invited user cannot be accessed this API.
+      tags:
+        - subusers
+      responses:
+        200:
+          description: Get users list
+          schema:
+            type: array
+            items:
+              properties:
+                username:
+                  type: string
+  /statistics/usage_summary:
+    get:
+      description: You can get your usage summary for a month.
+      tags:
+        - statistics
+      responses:
+        200:
+          description: Get usage summary
+          schema:
+            type: object
+            properties:
+              update_time:
+                type: string
+              projects_count:
+                type: integer
+              disk_total:
+                type: integer
+              transfer_total:
+                type: integer
+              user_name:
+                type: string
+              track_month:
+                type: integer
+definitions:
+  LoginPostRequest:
+    properties:
+      username:
+        type: string
+      password:
+        type: string
+  LoginPostResponse:
+    properties:
+      AccessToken:
+        type: string
+  LoginErrorResponse:
+    properties:
+      message:
+        type: string
+        description: Invalid Username or Password
+  PlanResponse:
+    properties:
+      id:
+        type: string
+      object:
+        type: string
+      amount:
+        type: integer
+      created:
+        type: string
+      currency:
+        type: string
+      interval:
+        type: string
+      interval_count:
+        type: integer
+      livemode:
+        type: boolean
+      name:
+        type: string
+      trial_period_days:
+        type: integer
+      metadata:
+        type: object
+        properties:
+          projects_limit:
+            type: string
+          domain_setting:
+            type: string
+          netlify_deploy:
+            type: string
+          user_limit:
+            type: string
+          import_archives:
+            type: string
+          export_archives:
+            type: string
+          backup:
+            type: string
+          max_transfer_gb:
+            type: string
+          max_disk_gb:
+            type: string
+          enable_subuser:
+            type: string
+  PlanWithAnResponse:
+    properties:
+      id:
+        type: string
+      object:
+        type: string
+      amount:
+        type: integer
+      created:
+        type: string
+      currency:
+        type: string
+      interval:
+        type: string
+      interval_count:
+        type: integer
+      livemode:
+        type: boolean
+      name:
+        type: string
+      trial_period_days:
+        type: integer
+      annualprice:
+        type: integer
+      metadata:
+        type: object
+        properties:
+          projects_limit:
+            type: string
+          domain_setting:
+            type: string
+          netlify_deploy:
+            type: string
+          user_limit:
+            type: string
+          import_archives:
+            type: string
+          export_archives:
+            type: string
+          backup:
+            type: string
+          max_transfer_gb:
+            type: string
+          max_disk_gb:
+            type: string
+          enable_subuser:
+            type: string
+  CommonErrorResponse:
+    properties:
+      message:
+        type: string
