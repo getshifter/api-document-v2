@@ -168,6 +168,36 @@ paths:
           description: Invaild parameters
           schema:
             "$ref": "#/definitions/CommonErrorResponse"
+  /projects/{project_id}/deployment:
+    put:
+      description: Update deploy setting of specfied project
+      tags:
+        - projects
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: project ID
+          type: string
+        - name: request
+          in: body
+          required: true
+          schema:
+            properties:
+              automation:
+                type: boolean
+                description: if set to true, deploy automatically after generating Artifact
+      responses:
+        204:
+          description: Update successfully
+        404:
+          description: can not find your project
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
   /projects/{project_id}/wordpress_site/{action}:
     post:
       description: Start WordPress
