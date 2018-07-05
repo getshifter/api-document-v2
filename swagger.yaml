@@ -3,7 +3,7 @@ info:
   title: Shifter API
   description: Shifter API Version 2 allows you to operate project and Your Wordpress
   version: "2.0"
-host: https://kelbes0rsk.execute-api.us-east-1.amazonaws.com
+host: kelbes0rsk.execute-api.us-east-1.amazonaws.com
 schemes:
   - https
 basePath: /production/v2
