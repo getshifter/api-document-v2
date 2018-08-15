@@ -1,18 +1,18 @@
 swagger: '2.0'
 info:
-  title: Shifter API
-  description: Shifter API Version 2 allows you to operate project and Your Wordpress
+  title: Shifter API Version 2
+  description: Shifter API Version 2 provides you the way of API based operation  for your project and Your Wordpress.
   version: "2.0"
-host: apiv2.getshifter.io
+host: api.getshifter.io
 schemes:
   - https
-basePath: /production/v2
+basePath: /v2
 produces:
   - application/json
 paths:
   /projects:
     get:
-      description: You can get the infomation of your projects
+      description: List the infomation of your projects
       tags:
         - projects
       responses:
@@ -21,31 +21,9 @@ paths:
           schema:
             type: array
             items:
-              properties:
-                project_id:
-                  type: string
-                project_name:
-                  type: string
-                project_owner:
-                  type: string
-                update_time:
-                  type: string
-                wordpress_site_url:
-                  type: string
-                access_url:
-                  type: string
-                domain:
-                  type: string
-                deploy_type:
-                  type: string
-                raw_url:
-                  type: string
-                create_time:
-                  type: string
-                automation:
-                  type: boolean
+              "$ref": "#/definitions/ProjectsResponse"
     post:
-      description: Create new project
+      description: Create a new project. (The organizations parameter is optional.)
       tags:
         - projects
       parameters:
@@ -53,9 +31,16 @@ paths:
           in: body
           required: true
           schema:
+            type: object
+            required:
+              - project_name
             properties:
               project_name:
                 type: string
+              organizations:
+                type: array
+                items:
+                  type: string
       responses:
         201:
           description: Create successfully
@@ -88,7 +73,7 @@ paths:
         204:
           description: Success
         404:
-          description: can not find your project
+          description: Not found
           schema:
             "$ref": "#/definitions/CommonErrorResponse"
         400:
@@ -139,7 +124,7 @@ paths:
               automation:
                 type: boolean
         404:
-          description: can not find your project
+          description: Not found
           schema:
             "$ref": "#/definitions/CommonErrorResponse"
   /projects/{project_id}/project_name:
@@ -165,7 +150,7 @@ paths:
         204:
           description: Update successfully
         404:
-          description: can not find your project
+          description: Not found
           schema:
             "$ref": "#/definitions/CommonErrorResponse"
         400:
@@ -195,14 +180,14 @@ paths:
         204:
           description: Update successfully
         404:
-          description: can not find your project
+          description: Not found
           schema:
             "$ref": "#/definitions/CommonErrorResponse"
         400:
           description: Invaild parameters
           schema:
             "$ref": "#/definitions/CommonErrorResponse"
-  /projects/{project_id}/wordpress_site/{action}:
+  /projects/{project_id}/wordpress_site/start:
     post:
       description: Start WordPress
       tags:
@@ -213,16 +198,47 @@ paths:
           required: true
           description: project ID
           type: string
-        - name: action
+      responses:
+        201:
+          description: WordPress started successfully.
+          schema:
+            type: object
+            properties:
+              notification_id:
+                type: string
+        404:
+          description: Not found
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /projects/{project_id}/wordpress_site/stop:
+    post:
+      description: Stop WordPress
+      tags:
+        - projects
+      parameters:
+        - name: project_id
           in: path
           required: true
-          description: action name. "start" or "stop"
+          description: project ID
           type: string
       responses:
         201:
-          description: WordPress started or stopped successfully.
+          description: WordPress started successfully.
+          schema:
+            type: object
+            properties:
+              notification_id:
+                type: string
         404:
-          description: can not find your project
+          description: Not found
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        409:
+          description: Invalid request
           schema:
             "$ref": "#/definitions/CommonErrorResponse"
         400:
@@ -293,7 +309,362 @@ paths:
           description: Card does not support
           schema:
             "$ref": "#/definitions/CommonErrorResponse"
-
+  /organizations:
+    get:
+      description: list organizations
+      tags:
+        - organizations
+      responses:
+        200:
+          description: list of organizations
+          schema:
+            type: array
+            items:
+              "$ref": "#/definitions/OrganizationsResponseWithId"
+        403:
+          description: Forbidden.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    post:
+      description: create a organization
+      tags:
+        - organizations
+      parameters:
+        - name: request
+          in: body
+          required: true
+          schema:
+            "$ref": "#/definitions/OrganizationsRequest"
+      responses:
+        201:
+          description: creating organization is successfully.
+          schema:
+            type: object
+            properties:
+              org_id:
+                type: string
+        403:
+          description: Forbidden.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /organizations/{org_id}:
+    get:
+      description: Get a details of organization
+      tags:
+        - organizations
+      parameters:
+        - name: org_id
+          in: path
+          description: organization id
+          required: true
+          type: string
+      responses:
+        200:
+          description: a details of organization
+          schema:
+            "$ref": "#/definitions/OrganizationsResponseWithId"
+        403:
+          description: Forbidden.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: Not found.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    post:
+      description: Update a organization
+      tags:
+        - organizations
+      parameters:
+        - name: org_id
+          in: path
+          description: organization id
+          required: true
+          type: string
+        - name: request
+          in: body
+          description: new organization information
+          required: true
+          schema:
+            "$ref": "#/definitions/OrganizationsRequest"
+      responses:
+        204:
+          description: updating is successfully.
+        403:
+          description: Forbidden.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: Not found.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    delete:
+      description: delete a organization
+      tags:
+        - organizations
+      parameters:
+        - name: org_id
+          in: path
+          description: organization id
+          required: true
+          type: string
+      responses:
+        204:
+          description: deleting a organization is successfully
+        403:
+          description: Forbidden.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: Not found.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /organizations/{org_id}/projects:
+    get:
+      description: list projects in specified organization
+      tags:
+        - organizations
+      parameters:
+        - name: org_id
+          in: path
+          description: organization id
+          required: true
+          type: string
+      responses:
+        200:
+          description: listing projects is successfully
+          schema:
+            type: array
+            items:
+              "$ref": "#/definitions/ProjectsResponse"
+        403:
+          description: Forbidden.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: Not found.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    post:
+      description: add projects to the organization
+      tags:
+        - organizations
+      parameters:
+        - name: org_id
+          in: path
+          description: organization id
+          required: true
+          type: string
+        - name: request
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              projects:
+                type: array
+                items:
+                  type: string
+      responses:
+        201:
+          description: added project successfully to the organization.
+        403:
+          description: Forbidden.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: Not found.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    delete:
+      description: detach projects from specfied organization
+      tags:
+        - organizations
+      parameters:
+        - name: org_id
+          in: path
+          description: organization id
+          required: true
+          type: string
+        - name: request
+          in: body
+          description: project IDs
+          schema:
+            type: object
+            properties:
+              projects:
+                type: array
+                items:
+                  type: string
+      responses:
+        204:
+          description: detaching project successfully
+        403:
+          description: Forbidden.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: Not found.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /organizations/{org_id}/projects/{project_id}:
+    get:
+      description: get project details which specified organization
+      tags:
+        - organizations
+      parameters:
+        - name: org_id
+          in: path
+          description: organization id
+          required: true
+          type: string
+        - name: project_id
+          in: path
+          description: project id
+          required: true
+          type: string
+      responses:
+        200:
+          description: project details specfied organization id and project id
+          schema:
+            "$ref": "#/definitions/ProjectsResponse"
+        403:
+          description: Forbidden.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: Not found.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /organizations/{org_id}/members:
+    get:
+      description: list users specfied organization
+      tags:
+        - organizations
+      parameters:
+        - name: org_id
+          in: path
+          description: organization id
+          required: true
+          type: string
+      responses:
+        200:
+          description: listing users is successfully.
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+        403:
+          description: Forbidden.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: Not found.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    post:
+      description: add users to the specfied organization
+      tags:
+        - organizations
+      parameters:
+        - name: org_id
+          in: path
+          description: organization id
+          required: true
+          type: string
+        - name: request
+          in: body
+          description: users who added to the organization
+          schema:
+            type: object
+            properties:
+              members:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - username
+                    - email
+                  properties:
+                    username:
+                      type: string
+                    email:
+                      type: string
+      responses:
+        201:
+          description: the users successfully added.
+        403:
+          description: Forbidden.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: Not found.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    delete:
+      description: delete user from specfied organization
+      tags:
+        - organizations
+      parameters:
+        - name: org_id
+          in: path
+          description: organization id
+          required: true
+          type: string
+        - name: request
+          in: body
+          description: list of username who deleted from specfied organization
+          required: true
+          schema:
+            type: object
+            properties:
+              members:
+                type: array
+                items:
+                  type: string
+      responses:
+        204:
+          description: deleting users successfully.
+        403:
+          description: Forbidden.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: Not found.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /organizations/{org_id}/activation/{key}:
+    post:
+      description: activate user who is invited the organization
+      tags:
+        - organizations
+      parameters:
+        - name: org_id
+          in: path
+          description: organization id
+          required: true
+          type: string
+        - name: key
+          in: path
+          description: activation key which is sent when owner invites other user to the organization
+          required: true
+          type: string
+      responses:
+        201:
+          description: successfully activated user
+        403:
+          description: Forbidden.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: Not found.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
 definitions:
   LoginPostRequest:
     properties:
@@ -402,6 +773,66 @@ definitions:
             type: string
           enable_subuser:
             type: string
+  OrganizationsResponseWithId:
+    properties:
+      org_id:
+        type: string
+      org_name:
+        type: string
+      org_website:
+        type: string
+      phone_number:
+        type: string
+      org_country:
+        type: string
+      org_state:
+        type: string
+      org_twitter:
+        type: string
+      org_size:
+        type: string
+  OrganizationsResponseWithoutId:
+    properties:
+      org_name:
+        type: string
+      org_website:
+        type: string
+      phone_number:
+        type: string
+      org_country:
+        type: string
+      org_state:
+        type: string
+      org_twitter:
+        type: string
+      org_size:
+        type: string
+  OrganizationsRequest:
+    "$ref": "#/definitions/OrganizationsResponseWithoutId"
+  ProjectsResponse:
+    properties:
+      project_id:
+        type: string
+      project_name:
+        type: string
+      project_owner:
+        type: string
+      update_time:
+        type: string
+      wordpress_site_url:
+        type: string
+      access_url:
+        type: string
+      domain:
+        type: string
+      deploy_type:
+        type: string
+      raw_url:
+        type: string
+      create_time:
+        type: string
+      automation:
+        type: boolean
   CommonErrorResponse:
     properties:
       message:
