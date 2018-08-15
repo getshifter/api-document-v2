@@ -669,7 +669,7 @@ paths:
     get:
       description: list coupons
       tags:
-        - organizations
+        - coupons
       responses:
         200:
           description: listing coupon code successfuly.
