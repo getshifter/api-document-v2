@@ -665,6 +665,18 @@ paths:
           description: Not found.
           schema:
             "$ref": "#/definitions/CommonErrorResponse"
+  /coupon:
+    get:
+      description: list coupons
+      tags:
+        - organizations
+      responses:
+        200:
+          description: listing coupon code successfuly.
+          schema:
+            type: array
+            items:
+              type: string
 definitions:
   LoginPostRequest:
     properties:
