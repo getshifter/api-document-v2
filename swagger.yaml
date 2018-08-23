@@ -204,7 +204,7 @@ paths:
             properties:
               emergency:
                 type: boolean
-                description: start WordPress as emergency user(default: false)
+                description: start WordPress as emergency user default is false 
       responses:
         201:
           description: WordPress started successfully.
