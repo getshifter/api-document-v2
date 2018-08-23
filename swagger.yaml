@@ -198,6 +198,13 @@ paths:
           required: true
           description: project ID
           type: string
+        - name: request
+          in: body
+          schema:
+            properties:
+              emergency:
+                type: boolean
+                description: start WordPress as emergency user(default: false)
       responses:
         201:
           description: WordPress started successfully.
@@ -206,6 +213,9 @@ paths:
             properties:
               notification_id:
                 type: string
+              emergency_password:
+                type: string
+                description: the password of emergency user. This password is only returned when emergency request
         404:
           description: Not found
           schema:
