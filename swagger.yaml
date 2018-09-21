@@ -204,7 +204,7 @@ paths:
             properties:
               emergency:
                 type: boolean
-                description: start WordPress as emergency user default is false 
+                description: start WordPress as emergency user default is false
       responses:
         201:
           description: WordPress started successfully.
@@ -324,6 +324,13 @@ paths:
       description: list organizations
       tags:
         - organizations
+      parameters:
+        - name: request
+          in: body
+          schema:
+            properties:
+              username:
+                type: string
       responses:
         200:
           description: list of organizations
