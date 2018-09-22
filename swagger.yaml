@@ -324,20 +324,20 @@ paths:
       description: list organizations
       tags:
         - organizations
-      parameters:
-        - name: request
-          in: body
-          schema:
-            properties:
-              username:
-                type: string
       responses:
         200:
           description: list of organizations
           schema:
-            type: array
-            items:
-              "$ref": "#/definitions/OrganizationsResponseWithId"
+            type: object
+            properties:
+              owner:
+                type: array
+                items:
+                  "$ref": "#/definitions/OrganizationsResponseWithId"
+              member:
+                type: array
+                items:
+                  "$ref": "#/definitions/OrganizationsResponseWithId"
         403:
           description: Forbidden.
           schema:
@@ -553,6 +553,34 @@ paths:
           description: Not found.
           schema:
             "$ref": "#/definitions/CommonErrorResponse"
+  /organizations/members/{member_name}/organizations:
+    get:
+      description: list organizations which member belongs into
+      tags:
+        - organizations
+      parameters:
+        - name: member_name
+          in: path
+          description: member's name
+          required: true
+          type: string
+      responses:
+        200:
+          description: getting organizations successfully
+          schema:
+            type: object
+            properties:
+              owner:
+                type: array
+                items:
+                  "$ref": "#/definitions/OrganizationsResponseWithId"
+              member:
+                type: array
+                items:
+                  "$ref": "#/definitions/OrganizationsResponseWithId"
+              message:
+                type: string
+                description: if user belongs to only one organization, Warning message
   /organizations/{org_id}/members:
     get:
       description: list users specfied organization
