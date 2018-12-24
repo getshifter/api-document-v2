@@ -289,6 +289,285 @@ paths:
                 type: string
               errorCode:
                 type: string
+  /sites:
+    get:
+      description: List the infomation of your sites
+      tags:
+        - sites
+      responses:
+        200:
+          description: Get your sites infomation
+          schema:
+            type: array
+            items:
+              "$ref": "#/definitions/ProjectsResponse"
+    post:
+      description: Create a new project. (The organizations parameter is optional.)
+      tags:
+        - sites
+      parameters:
+        - name: request
+          in: body
+          required: true
+          schema:
+            type: object
+            required:
+              - site_name
+            properties:
+              site_name:
+                type: string
+              organizations:
+                type: array
+                items:
+                  type: string
+      responses:
+        201:
+          description: Create successfully
+          schema:
+            properties:
+              project_id:
+                type: string
+              site_name:
+                type: string
+              shifter_cdn_url:
+                type: string
+              wordpress_site_url:
+                type: string
+        400:
+          description: It exceeds the maximum number of your sites
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /sites/{site_id}:
+    delete:
+      description: Delete your project
+      tags:
+        - sites
+      parameters:
+        - name: site_id
+          in: path
+          required: true
+          description: project ID
+          type: string
+      responses:
+        204:
+          description: Success
+        404:
+          description: Not found
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    get:
+      description: Get your project infomation
+      tags:
+        - sites
+      parameters:
+        - name: site_id
+          in: path
+          required: true
+          description: project ID
+          type: string
+      responses:
+        200:
+          description: Project status response
+          schema:
+            properties:
+              project_name:
+                type: string
+              stock_state:
+                type: string
+              site_id:
+                type: string
+              wordpress_site_url:
+                type: string
+              domain:
+                type: string
+              php_version:
+                type: string
+              access_url:
+                type: string
+              update_time:
+                type: string
+              last_launched:
+                type: string
+              disk_usage:
+                type: string
+              deploy_type:
+                type: string
+              raw_url:
+                type: string
+              create_time:
+                type: string
+              automation:
+                type: boolean
+        404:
+          description: Not found
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /sites/{site_id}/site_name:
+    put:
+      description: Update your project name
+      tags:
+        - sites
+      parameters:
+        - name: site_id
+          in: path
+          required: true
+          description: project ID
+          type: string
+        - name: request
+          in: body
+          required: true
+          schema:
+            properties:
+              site_name:
+                type: string
+                description: project name
+      responses:
+        204:
+          description: Update successfully
+        404:
+          description: Not found
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /sites/{site_id}/deployment:
+    put:
+      description: Update deploy setting of specfied project
+      tags:
+        - sites
+      parameters:
+        - name: site_id
+          in: path
+          required: true
+          description: project ID
+          type: string
+        - name: request
+          in: body
+          required: true
+          schema:
+            properties:
+              automation:
+                type: boolean
+                description: if set to true, deploy automatically after generating Artifact
+      responses:
+        204:
+          description: Update successfully
+        404:
+          description: Not found
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /sites/{site_id}/wordpress_site/start:
+    post:
+      description: Start WordPress
+      tags:
+        - sites
+      parameters:
+        - name: site_id
+          in: path
+          required: true
+          description: project ID
+          type: string
+        - name: request
+          in: body
+          schema:
+            properties:
+              emergency:
+                type: boolean
+                description: start WordPress as emergency user default is false
+      responses:
+        201:
+          description: WordPress started successfully.
+          schema:
+            type: object
+            properties:
+              notification_id:
+                type: string
+              emergency_password:
+                type: string
+                description: the password of emergency user. This password is only returned when emergency request
+        404:
+          description: Not found
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /sites/{site_id}/wordpress_site/stop:
+    post:
+      description: Stop WordPress
+      tags:
+        - sites
+      parameters:
+        - name: site_id
+          in: path
+          required: true
+          description: project ID
+          type: string
+      responses:
+        201:
+          description: WordPress started successfully.
+          schema:
+            type: object
+            properties:
+              notification_id:
+                type: string
+        404:
+          description: Not found
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        409:
+          description: Invalid request
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+
+  /sites/{site_id}/wordpress_site/check_wp_setup/{notification_id}:
+    get:
+      description: Start WordPress
+      tags:
+        - sites
+      parameters:
+        - name: site_id
+          in: path
+          required: true
+          description: project ID
+          type: string
+        - name: notification_id
+          in: path
+          required: true
+          description: notification ID
+          type: string
+      responses:
+        200:
+          description: WordPress Site importing status
+          schema:
+            type: string
+        400:
+          description: Invaild parameters
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: missing your project(errorCode:missing_project) or notificationId(errorCode:missing_notification_id)
+          schema:
+            properties:
+              message:
+                type: string
+              errorCode:
+                type: string
   /billing:
     post:
       description: update payment method
