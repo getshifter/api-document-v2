@@ -1001,6 +1001,150 @@ paths:
             type: array
             items:
               type: string
+  /roles:
+    get:
+      description: list roles
+      tags:
+        - roles
+      responses:
+        200:
+          description: list of roles and description
+          schema:
+            type: array
+            items:
+              type: string
+  /role/{role_name}:
+    get:
+      description: get a role
+      tags:
+        - roles
+      parameters:
+        - name: role_name
+          in: path
+          description: name of role
+          required: true
+          type: string
+      responses:
+        200:
+          description: list of accessible API
+          schema:
+            type: array
+            items:
+              type: string
+        404:
+          description: role_name does not find
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    post:
+      description: create or update role
+      tags:
+        - roles
+      parameters:
+        - name: role_name
+          in: path
+          description: name of role
+          required: true
+          type: string
+        - name: request
+          in: body
+          description: list of features which is accessible
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        201:
+          description: creating role successfully
+        404:
+          description: role_name does not find
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    delete:
+      description: delete role
+      tags:
+        - roles
+      parameters:
+        - name: role_name
+          in: path
+          description: name of role
+          required: true
+          type: string
+      responses:
+        204:
+          description: deleting role successfully
+        404:
+          description: role_name does not find
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /role/{role_name}/users:
+    get:
+      description: list users who the role attached
+      tags:
+        - roles
+      parameters:
+        - name: role_name
+          in: path
+          description: name of role
+          required: true
+          type: string
+      responses:
+        200:
+          description: list roles
+          schema:
+            type: array
+            items:
+              type: string
+    post:
+      description: add or update users in the role
+      tags:
+        - roles
+      parameters:
+        - name: role_name
+          in: path
+          description: name of role
+          required: true
+          type: string
+        - name: request
+          in: body
+          description: list of user name who belong to the role
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        201:
+          description: adding or update users to the role successfully
+        404:
+          description: one of users does not exist
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    delete:
+      description: delete users from the role
+      tags:
+        - roles
+      parameters:
+        - name: role_name
+          in: path
+          description: name of role
+          required: true
+          type: string
+        - name: request
+          in: body
+          description: list of user name who belong to the role
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        204:
+          description: deleting users from the role successfully
+        404:
+          description: one of users does not exist
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
 definitions:
   LoginPostRequest:
     properties:
