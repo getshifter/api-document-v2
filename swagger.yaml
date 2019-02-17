@@ -919,6 +919,8 @@ paths:
                       type: string
                     email:
                       type: string
+                    role:
+                      type: string
       responses:
         201:
           description: the users successfully added.
