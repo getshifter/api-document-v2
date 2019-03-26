@@ -1192,6 +1192,43 @@ paths:
           description: user is not site owner.  
           schema:
             "$ref": "#/definitions/CommonErrorResponse"
+  /webhooks/{site_id}/history:
+    get:
+      description: list web hook history
+      tags:
+        - webhooks
+      parameters:
+        - name: site_id
+          in: path
+          description: site id
+          required: true
+          type: string
+      responses:
+        200:
+          description: list webhooks under the site id
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                site_id:
+                  type: string
+                hook_event:
+                 type: string
+                webhook_url:
+                  type: string
+                result:
+                  type: string
+                jon_id:
+                  type: string
+                called_date:
+                  type: string
+                text:
+                  type: string
+        404:
+          description: not found
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse" 
   /roles:
     get:
       description: list roles (work in progress)
