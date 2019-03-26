@@ -1003,9 +1003,198 @@ paths:
             type: array
             items:
               type: string
+  /webhooks/{site_id}:
+    get:
+      description: get web hooks
+      tags:
+        - webhooks
+      parameters:
+        - name: site_id
+          in: path
+          description: site id
+          required: true
+          type: string
+      responses:
+        200:
+          description: list webhooks under the site id
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                site_id:
+                  type: string
+                hook_event:
+                 type: string
+                webhook_url:
+                  type: string
+                method:
+                  type: string
+                enabled:
+                  type: boolean
+                headers:
+                  type: object
+        404:
+          description: not found
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse" 
+    post:
+      description: create web hooks
+      tags:
+        - webhooks
+      parameters:
+        - name: site_id
+          in: path
+          description: site id
+          required: true
+          type: string
+        - name: request
+          in: body
+          description: web hook item
+          required: true
+          type: object
+          properties:
+            hook_event:
+              type: string
+            url:
+              type: string
+            method:
+              type: string
+            enabled:
+              type: string
+            headers:
+              type: object
+      responses:
+        201:
+          description: succeeded. (created web hook item will be returned)
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                site_id:
+                  type: string
+                hook_event:
+                 type: string
+                webhook_url:
+                  type: string
+                method:
+                  type: string
+                enabled:
+                  type: boolean
+                headers:
+                  type: object
+        400:
+          description: invalid parameter.  
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"           
+        403:
+          description: user is not site owner.  
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    put:
+      description: update web hooks
+      tags:
+        - webhooks
+      parameters:
+        - name: site_id
+          in: path
+          description: site id
+          required: true
+          type: string
+        - name: request
+          in: body
+          description: web hook item
+          required: true
+          type: object
+          properties:
+            hook_event:
+              type: string
+            url:
+              type: string
+            method:
+              type: string
+            enabled:
+              type: string
+            headers:
+              type: object
+      responses:
+        204:
+          description: succeeded. (updated web hook item will be returned)
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                site_id:
+                  type: string
+                hook_event:
+                 type: string
+                webhook_url:
+                  type: string
+                method:
+                  type: string
+                enabled:
+                  type: boolean
+                headers:
+                  type: object
+        400:
+          description: invalid parameter.  
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"           
+        403:
+          description: user is not site owner.  
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    delete:
+      description: delete web hooks
+      tags:
+        - webhooks
+      parameters:
+        - name: site_id
+          in: path
+          description: site id
+          required: true
+          type: string
+        - name: request
+          in: body
+          description: web hook item
+          required: true
+          type: object
+          properties:
+            hook_event:
+              type: string
+      responses:
+        204:
+          description: succeeded. (deleted web hook item will be returened)
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                site_id:
+                  type: string
+                hook_event:
+                 type: string
+                webhook_url:
+                  type: string
+                method:
+                  type: string
+                enabled:
+                  type: boolean
+                headers:
+                  type: object
+        400:
+          description: invalid parameter.  
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"           
+        403:
+          description: user is not site owner.  
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
   /roles:
     get:
-      description: list roles
+      description: list roles (work in progress)
       tags:
         - roles
       responses:
@@ -1017,7 +1206,7 @@ paths:
               type: string
   /role/{role_name}:
     get:
-      description: get a role
+      description: get a role (work in progress)
       tags:
         - roles
       parameters:
@@ -1038,7 +1227,7 @@ paths:
           schema:
             "$ref": "#/definitions/CommonErrorResponse"
     post:
-      description: create or update role
+      description: create or update role (work in progress)
       tags:
         - roles
       parameters:
@@ -1063,7 +1252,7 @@ paths:
           schema:
             "$ref": "#/definitions/CommonErrorResponse"
     delete:
-      description: delete role
+      description: delete role (work in progress)
       tags:
         - roles
       parameters:
@@ -1081,7 +1270,7 @@ paths:
             "$ref": "#/definitions/CommonErrorResponse"
   /role/{role_name}/users:
     get:
-      description: list users who the role attached
+      description: list users who the role attached (work in progress)
       tags:
         - roles
       parameters:
@@ -1098,7 +1287,7 @@ paths:
             items:
               type: string
     post:
-      description: add or update users in the role
+      description: add or update users in the role (work in progress)
       tags:
         - roles
       parameters:
@@ -1123,7 +1312,7 @@ paths:
           schema:
             "$ref": "#/definitions/CommonErrorResponse"
     delete:
-      description: delete users from the role
+      description: delete users from the role (work in progress)
       tags:
         - roles
       parameters:
