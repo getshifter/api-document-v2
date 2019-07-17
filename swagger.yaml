@@ -1353,7 +1353,7 @@ paths:
             type: array
             items:
               type: string
-  /webhooks/{site_id}:
+  /webhooks/site/{site_id}:
     get:
       description: get web hooks
       tags:
@@ -1542,7 +1542,7 @@ paths:
           description: user is not site owner.  
           schema:
             "$ref": "#/definitions/CommonErrorResponse"
-  /webhooks/{site_id}/history:
+  /webhooks/site/{site_id}/history:
     get:
       description: list web hook history
       tags:
