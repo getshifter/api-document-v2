@@ -601,6 +601,7 @@ paths:
   /organizations:
     get:
       description: list organizations
+      deprecated: true
       tags:
         - organizations
       responses:
@@ -623,6 +624,7 @@ paths:
             "$ref": "#/definitions/CommonErrorResponse"
     post:
       description: create a organization
+      deprecated: true
       tags:
         - organizations
       parameters:
@@ -646,6 +648,7 @@ paths:
   /organizations/{org_id}:
     get:
       description: Get a details of organization
+      deprecated: true
       tags:
         - organizations
       parameters:
@@ -669,6 +672,7 @@ paths:
             "$ref": "#/definitions/CommonErrorResponse"
     post:
       description: Update a organization
+      deprecated: true
       tags:
         - organizations
       parameters:
@@ -696,6 +700,7 @@ paths:
             "$ref": "#/definitions/CommonErrorResponse"
     delete:
       description: delete a organization
+      deprecated: true
       tags:
         - organizations
       parameters:
@@ -718,6 +723,7 @@ paths:
   /organizations/{org_id}/projects:
     get:
       description: list projects in specified organization
+      deprecated: true
       tags:
         - organizations
       parameters:
@@ -743,6 +749,7 @@ paths:
             "$ref": "#/definitions/CommonErrorResponse"
     post:
       description: add projects to the organization
+      deprecated: true
       tags:
         - organizations
       parameters:
@@ -774,6 +781,7 @@ paths:
             "$ref": "#/definitions/CommonErrorResponse"
     delete:
       description: detach projects from specfied organization
+      deprecated: true
       tags:
         - organizations
       parameters:
@@ -806,6 +814,7 @@ paths:
   /organizations/{org_id}/projects/{project_id}:
     get:
       description: get project details which specified organization
+      deprecated: true
       tags:
         - organizations
       parameters:
@@ -832,37 +841,10 @@ paths:
           description: Not found.
           schema:
             "$ref": "#/definitions/CommonErrorResponse"
-  /organizations/members/{member_name}/organizations:
-    get:
-      description: list organizations which member belongs into
-      tags:
-        - organizations
-      parameters:
-        - name: member_name
-          in: path
-          description: member's name
-          required: true
-          type: string
-      responses:
-        200:
-          description: getting organizations successfully
-          schema:
-            type: object
-            properties:
-              owner:
-                type: array
-                items:
-                  "$ref": "#/definitions/OrganizationsResponseWithId"
-              member:
-                type: array
-                items:
-                  "$ref": "#/definitions/OrganizationsResponseWithId"
-              message:
-                type: string
-                description: if user belongs to only one organization, Warning message
   /organizations/{org_id}/members:
     get:
       description: list users specfied organization
+      deprecated: true
       tags:
         - organizations
       parameters:
@@ -893,6 +875,7 @@ paths:
             "$ref": "#/definitions/CommonErrorResponse"
     post:
       description: add users to the specfied organization
+      deprecated: true
       tags:
         - organizations
       parameters:
@@ -934,6 +917,7 @@ paths:
             "$ref": "#/definitions/CommonErrorResponse"
     delete:
       description: delete user from specfied organization
+      deprecated: true
       tags:
         - organizations
       parameters:
@@ -967,6 +951,7 @@ paths:
   /organizations/{org_id}/activation/{key}:
     post:
       description: activate user who is invited the organization
+      deprecated: true
       tags:
         - organizations
       parameters:
@@ -978,6 +963,371 @@ paths:
         - name: key
           in: path
           description: activation key which is sent when owner invites other user to the organization
+          required: true
+          type: string
+      responses:
+        201:
+          description: successfully activated user
+        403:
+          description: Forbidden.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: Not found.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /teams:
+    get:
+      description: list teams
+      tags:
+        - teams
+      responses:
+        200:
+          description: list of teams
+          schema:
+            type: object
+            properties:
+              owner:
+                type: array
+                items:
+                  "$ref": "#/definitions/OrganizationsResponseWithId"
+              member:
+                type: array
+                items:
+                  "$ref": "#/definitions/OrganizationsResponseWithId"
+        403:
+          description: Forbidden.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    post:
+      description: create a team
+      tags:
+        - teams
+      parameters:
+        - name: request
+          in: body
+          required: true
+          schema:
+            "$ref": "#/definitions/OrganizationsRequest"
+      responses:
+        201:
+          description: creating team is successfully.
+          schema:
+            type: object
+            properties:
+              team_id:
+                type: string
+        403:
+          description: Forbidden.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /teams/{team_id}:
+    get:
+      description: Get a details of team
+      tags:
+        - teams
+      parameters:
+        - name: team_id
+          in: path
+          description: team id
+          required: true
+          type: string
+      responses:
+        200:
+          description: a details of team
+          schema:
+            "$ref": "#/definitions/OrganizationsResponseWithId"
+        403:
+          description: Forbidden.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: Not found.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    post:
+      description: Update a team
+      tags:
+        - teams
+      parameters:
+        - name: team_id
+          in: path
+          description: team id
+          required: true
+          type: string
+        - name: request
+          in: body
+          description: new team information
+          required: true
+          schema:
+            "$ref": "#/definitions/OrganizationsRequest"
+      responses:
+        204:
+          description: updating is successfully.
+        403:
+          description: Forbidden.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: Not found.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    delete:
+      description: delete a team
+      tags:
+        - teams
+      parameters:
+        - name: team_id
+          in: path
+          description: team id
+          required: true
+          type: string
+      responses:
+        204:
+          description: deleting a team is successfully
+        403:
+          description: Forbidden.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: Not found.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /teams/{team_id}/projects:
+    get:
+      description: list projects in specified team
+      tags:
+        - teams
+      parameters:
+        - name: team_id
+          in: path
+          description: team id
+          required: true
+          type: string
+      responses:
+        200:
+          description: listing projects is successfully
+          schema:
+            type: array
+            items:
+              "$ref": "#/definitions/ProjectsResponse"
+        403:
+          description: Forbidden.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: Not found.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    post:
+      description: add projects to the team
+      tags:
+        - teams
+      parameters:
+        - name: team_id
+          in: path
+          description: team id
+          required: true
+          type: string
+        - name: request
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              projects:
+                type: array
+                items:
+                  type: string
+      responses:
+        201:
+          description: added project successfully to the team.
+        403:
+          description: Forbidden.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: Not found.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    delete:
+      description: detach projects from specfied team
+      tags:
+        - teams
+      parameters:
+        - name: team_id
+          in: path
+          description: team id
+          required: true
+          type: string
+        - name: request
+          in: body
+          description: project IDs
+          schema:
+            type: object
+            properties:
+              projects:
+                type: array
+                items:
+                  type: string
+      responses:
+        204:
+          description: detaching project successfully
+        403:
+          description: Forbidden.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: Not found.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /teams/{team_id}/projects/{project_id}:
+    get:
+      description: get project details which specified team
+      tags:
+        - teams
+      parameters:
+        - name: team_id
+          in: path
+          description: team id
+          required: true
+          type: string
+        - name: project_id
+          in: path
+          description: project id
+          required: true
+          type: string
+      responses:
+        200:
+          description: project details specfied team id and project id
+          schema:
+            "$ref": "#/definitions/ProjectsResponse"
+        403:
+          description: Forbidden.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: Not found.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /teams/{team_id}/members:
+    get:
+      description: list users specfied team
+      tags:
+        - teams
+      parameters:
+        - name: team_id
+          in: path
+          description: team id
+          required: true
+          type: string
+      responses:
+        200:
+          description: listing users is successfully.
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+        403:
+          description: Forbidden.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: Not found.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    post:
+      description: add users to the specfied team
+      tags:
+        - teams
+      parameters:
+        - name: team_id
+          in: path
+          description: team id
+          required: true
+          type: string
+        - name: request
+          in: body
+          description: users who added to the team
+          schema:
+            type: object
+            properties:
+              members:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - username
+                    - email
+                  properties:
+                    username:
+                      type: string
+                    email:
+                      type: string
+                    role:
+                      type: string
+      responses:
+        201:
+          description: the users successfully added.
+        403:
+          description: Forbidden.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: Not found.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+    delete:
+      description: delete user from specfied team
+      tags:
+        - teams
+      parameters:
+        - name: team_id
+          in: path
+          description: team id
+          required: true
+          type: string
+        - name: request
+          in: body
+          description: list of username who deleted from specfied team
+          required: true
+          schema:
+            type: object
+            properties:
+              members:
+                type: array
+                items:
+                  type: string
+      responses:
+        204:
+          description: deleting users successfully.
+        403:
+          description: Forbidden.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+        404:
+          description: Not found.
+          schema:
+            "$ref": "#/definitions/CommonErrorResponse"
+  /teams/{team_id}/activation/{key}:
+    post:
+      description: activate user who is invited the team
+      tags:
+        - teams
+      parameters:
+        - name: team_id
+          in: path
+          description: team id
+          required: true
+          type: string
+        - name: key
+          in: path
+          description: activation key which is sent when owner invites other user to the team
           required: true
           type: string
       responses:
@@ -1003,7 +1353,7 @@ paths:
             type: array
             items:
               type: string
-  /webhooks/{site_id}:
+  /webhooks/site/{site_id}:
     get:
       description: get web hooks
       tags:
@@ -1192,7 +1542,7 @@ paths:
           description: user is not site owner.  
           schema:
             "$ref": "#/definitions/CommonErrorResponse"
-  /webhooks/{site_id}/history:
+  /webhooks/site/{site_id}/history:
     get:
       description: list web hook history
       tags:
